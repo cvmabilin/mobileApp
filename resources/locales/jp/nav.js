@@ -2,6 +2,7 @@ const nav = {
     dashboard: "ダッシュボード",
     settings: "設定",
     messages: "メッセージ",
+    new_account: "新しいアカウント",
     schedule_management: {
         title: "スケジュール管理",
             schedule: "スケジュール",

@@ -11,8 +11,10 @@ import Modal from 'react-native-modal';
 
 class MessagesPage extends Component {
 
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
+
+        let { trans } = props.screenProps
 
         this.state = {
             list: [
@@ -57,9 +59,21 @@ class MessagesPage extends Component {
             category: undefined,
             all: undefined,
             select: undefined,
-            category_list: ['All Categories', 'No Category', 'Regular'],
-            all_list: ['All', 'Message', 'Contact', 'Anken'],
-            select_list: ['Recent', 'Unread'],
+            category_list: [
+                trans.t('chat_messages.category_list.all'),
+                trans.t('chat_messages.category_list.no_category'),
+                trans.t('chat_messages.category_list.regular')
+            ],
+            all_list: [
+                trans.t('chat_messages.all_list.all'),
+                trans.t('chat_messages.all_list.message'),
+                trans.t('chat_messages.all_list.contact'),
+                trans.t('chat_messages.all_list.anken'),
+            ],
+            select_list: [
+                trans.t('chat_messages.select_list.recent'),
+                trans.t('chat_messages.select_list.unread'),
+            ],
             showModal: false,
         }
 
@@ -70,12 +84,12 @@ class MessagesPage extends Component {
         this.setState({ showModal: !this.state.showModal });
     };
     
-    renderCommands(data) {
+    renderCommands(data, trans) {
         return(
             <View style={css.rowBack} >
                 <TouchableOpacity 
                     style={[css.backRightBtn, css.successBtn]}
-                    onPress={ () => alertMessage('Archive', 'Archive '+ data.name + '?') }                                                
+                    onPress={ () => alertMessage(trans.t('chat_messages.alert.archive'), trans.t('chat_messages.alert.archive')+ data.name + '?') }                                                
                 >
                     <Text >
                         <Icon name='ios-archive' style={css.whiteIcon} />
@@ -84,7 +98,7 @@ class MessagesPage extends Component {
 
                 <TouchableOpacity 
                     style={[css.backRightBtn, css.backRightBtnLeft]} 
-                    onPress={ () => alertMessage('Lock', 'Are you sure you want to Lock '+ data.name + '?') }                                                
+                    onPress={ () => alertMessage(trans.t('chat_messages.alert.lock'), trans.t('chat_messages.alert.lock')+ data.name + '?') }                                                
                 >
                     <Text >
                         <Icon name='ios-lock' style={css.whiteIcon} />
@@ -92,7 +106,7 @@ class MessagesPage extends Component {
                 </TouchableOpacity>
                 <TouchableOpacity 
                     style={[css.backRightBtn, css.backRightBtnRight]} 
-                    onPress={ () => alertMessage('Block','Are you sure you want to Block '+ data.name + '?') }                                                
+                    onPress={ () => alertMessage(trans.t('chat_messages.alert.block'),trans.t('chat_messages.alert.block')+ data.name + '?') }                                                
                 >
                     <Text >
                         <Icon type='MaterialIcons' name='block' style={css.whiteIcon} />
@@ -140,24 +154,24 @@ class MessagesPage extends Component {
         )
     }
 
-    renderFooter() {
+    renderFooter(trans) {
         return(
             <Footer >
                 <FooterTab style={css.chatBottomMenu}>
                     <Button badge vertical >
                         <Badge><Text>2</Text></Badge>
                         <Icon name="ios-chatboxes"  style={css.chatBottomColor}/>
-                        <Text style={css.chatBottomColor}>Message</Text>
+                        <Text style={css.chatBottomColor}>{trans.t('chat_messages.footer.message')}</Text>
                     </Button>
                     <Button badge vertical >
                         <Badge ><Text>6</Text></Badge>
 
                         <Icon name="lock" style={css.chatBottomColor}/>
-                        <Text style={css.chatBottomColor}>Lock</Text>
+                        <Text style={css.chatBottomColor}>{trans.t('chat_messages.footer.lock')}</Text>
                     </Button>
                     <Button vertical >
                         <Icon name="bookmarks" style={css.chatBottomColor} />
-                        <Text style={css.chatBottomColor}>Schedule</Text>
+                        <Text style={css.chatBottomColor}>{trans.t('chat_messages.footer.schedule')}</Text>
                     </Button>
                 </FooterTab>
             </Footer>
@@ -182,7 +196,7 @@ class MessagesPage extends Component {
     }
 
 
-    renderModal() {
+    renderModal(trans) {
         const { showModal, category, all, select, category_list, all_list, select_list } = this.state
         return(
             <Modal 
@@ -190,13 +204,13 @@ class MessagesPage extends Component {
                 onBackdropPress={() => this.toggleModal()}
             >
                 <View style={ css.modalView }>
-                    <Text style={ css.modalText }>Select Filter</Text>
+                    <Text style={ css.modalText }>{trans.t('chat_messages.modal.filter')}</Text>
 
                     <Item picker>
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="ios-arrow-down" />}
-                            placeholder="All Categories"
+                            placeholder={trans.t('chat_messages.modal.placeholder.categories')}
                             placeholderStyle={{ color: "#bfc6ea" }}
                             placeholderIconColor="#007aff"
                             selectedValue={category}
@@ -210,7 +224,7 @@ class MessagesPage extends Component {
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="ios-arrow-down" />}
-                            placeholder="All"
+                            placeholder={trans.t('chat_messages.modal.placeholder.all')}
                             placeholderStyle={{ color: "#bfc6ea" }}
                             placeholderIconColor="#007aff"
                             selectedValue={all}
@@ -224,7 +238,7 @@ class MessagesPage extends Component {
                         <Picker
                             mode="dropdown"
                             iosIcon={<Icon name="ios-arrow-down" />}
-                            placeholder="Select"
+                            placeholder={trans.t('chat_messages.modal.placeholder.select')}
                             placeholderStyle={{ color: "#bfc6ea" }}
                             placeholderIconColor="#007aff"
                             selectedValue={select}
@@ -241,7 +255,7 @@ class MessagesPage extends Component {
                         style={ css.modalButton }
                     >
                         <Text>
-                            Done
+                            {trans.t('chat_messages.modal.buttons.done')}
                         </Text>
                     </Button>
                 </View>
@@ -250,12 +264,13 @@ class MessagesPage extends Component {
     }
 
     render() {
-        const { navigation } = this.props
+        const { navigation, screenProps } = this.props
         const { list, search } = this.state
+        const { trans } = screenProps
         return (
             <Fragment>
 
-                { this.renderModal() }
+                { this.renderModal(trans) }
 
                 <Content>
 
@@ -269,7 +284,7 @@ class MessagesPage extends Component {
                             inputStyle={{ padding: 0 }}
                             onChangeText={text => this.searchFilter(text)}
                             onClear={text => this.searchFilter('')}
-                            placeholder="Type a keyword..."
+                            placeholder={ trans.t('chat_messages.placeholder.search') }
                             value={search}
                         />
 
@@ -292,7 +307,7 @@ class MessagesPage extends Component {
                                         rightOpenValue={-150}
                                     >
                                         
-                                        { this.renderCommands(data.item) }
+                                        { this.renderCommands(data.item, trans) }
 
                                         { this.renderChatList(data.item, navigation) }
 
@@ -303,7 +318,7 @@ class MessagesPage extends Component {
                     </List>
                 </Content>
 
-                { this.renderFooter() }
+                { this.renderFooter(trans) }
 
             </Fragment>
         );

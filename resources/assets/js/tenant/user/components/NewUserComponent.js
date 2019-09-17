@@ -106,22 +106,22 @@ class NewUserComponent extends Component {
         return this.props.navigation.navigate('UsersPage')
     }
 
-    onDelete = () => {
+    onDelete = trans => {
         const { fullname, id } = this.props.navigation.getParam('data')
 
         if (id == this.props.loggedIn.id)
             return alertAfterTransac(
-                'Info',
-                'You cannot delete your own account.',
+                trans.t('new_users.form.validation.info'),
+                trans.t('new_users.form.validation.delete_account'),
                 () => null)
         
         actionSheetDelete(
-            'Are you sure you want to delete '+fullname+'?',
-            () => this.props.deleteUser(id, this.returnToUsers)
+            trans.t('new_users.form.validation.delete_confirmation') +fullname+'?',
+            () => this.props.deleteUser(id, this.returnToUsers, trans)
         )
     }
 
-    onUpdate = () => {
+    onUpdate = trans => {
         let selectedUser = this.props.navigation.getParam('data')
         const { code, first_name, middle_name, last_name } = this.state
 
@@ -144,10 +144,10 @@ class NewUserComponent extends Component {
             loggedId: this.props.loggedIn.id
         }
 
-        this.props.updateUser(data, this.returnToUsers)
+        this.props.updateUser(data, this.returnToUsers, trans)
     }
 
-    onSave = () => {
+    onSave = trans => {
         let { username, password, code, first_name, middle_name, last_name, confirmPassword } = this.state
 
         let result = this.validateFields({
@@ -157,18 +157,17 @@ class NewUserComponent extends Component {
             last_name,
             password,
             confirmPassword
-        }, newUserConstraints)
+        }, newUserConstraints, this.props.screenProps.trans)
 
         if (result != undefined)
             return false
 
-        this.props.saveUser({ username, password, code, first_name, middle_name, last_name }, this.returnToUsers)
+        this.props.saveUser({ username, password, code, first_name, middle_name, last_name }, this.returnToUsers, trans)
     }
 
-    validateFields = (data, constraints) => {
-        
+    validateFields = (data, constraints, trans) => {
 
-        validate.validators.presence.message = '(This field is required.)'
+        validate.validators.presence.message = trans.t('new_users.form.validation.required') 
 
         this.setState({
             errors: validate(data, constraints)
@@ -177,7 +176,7 @@ class NewUserComponent extends Component {
         return validate(data, constraints)
     }
 
-    renderUpdateCommands = (disableButton) => {
+    renderUpdateCommands = (disableButton, trans) => {
         return(
             <Fragment>
 
@@ -187,7 +186,7 @@ class NewUserComponent extends Component {
                     onPress={ () => this.cancelEdit() }
                     style = {{ marginBottom: 5 }}
                 >
-                    <Text>Cancel</Text>
+                    <Text>{ trans.t('new_users.form.buttons.cancel') }</Text>
                 </Button> 
 
                 <Button 
@@ -195,45 +194,45 @@ class NewUserComponent extends Component {
                     info 
                     block
                     
-                    onPress={ () => this.onUpdate() }
+                    onPress={ () => this.onUpdate(trans) }
                     >
-                        <Text>Update</Text>
+                        <Text>{ trans.t('new_users.form.buttons.update') }</Text>
                 </Button> 
             </Fragment>
         )
     }
 
-    renderViewCommands = () => {
+    renderViewCommands = trans => {
         return(
             <Fragment>
                 <Button info block
                     style = {{ marginBottom: 5 }}
                     onPress={ () => this.editUser() }
                     >
-                        <Text>Edit</Text>
+                        <Text>{ trans.t('new_users.form.buttons.edit') }</Text>
                     </Button> 
                     <Button danger block
-                        onPress={ () => this.onDelete() }
+                        onPress={ () => this.onDelete(trans) }
                     >
-                    <Text>Delete</Text>
+                    <Text>{ trans.t('new_users.form.buttons.delete') }</Text>
                 </Button> 
             </Fragment>
         )
     }
 
-    renderCredential = (username, password, confirmPassword, disabled, validated) => {
+    renderCredential = (username, password, confirmPassword, disabled, validated, trans) => {
         return(
             <Fragment>
                 <Item error={ validated.errorUser } stackedLabel>
-                    <Label>Username <Text style={ css.error } >{ validated.errorUserMessage }</Text></Label>
+                    <Label>{ trans.t('new_users.form.label.username') } <Text style={ css.error } >{ validated.errorUserMessage }</Text></Label>
                     <Input disabled={disabled} value={username} onChangeText={ (username) => this.setState({username}) } autoCapitalize='none' />
                 </Item>
                 <Item error={ validated.errorPass } stackedLabel >
-                    <Label>Password <Text style={ css.error } >{ validated.errorPassMessage }</Text></Label>
+                    <Label>{ trans.t('new_users.form.label.password') } <Text style={ css.error } >{ validated.errorPassMessage }</Text></Label>
                     <Input disabled={disabled} secureTextEntry={true} value={password} onChangeText={ (password) => this.setState({password}) } autoCapitalize='none' />
                 </Item>
                 <Item error={ validated.errorConPass } stackedLabel >
-                    <Label>Confirm Password <Text style={ css.error } >{ validated.errorConPassMessage }</Text></Label>
+                    <Label>{ trans.t('new_users.form.label.confirm_password') } <Text style={ css.error } >{ validated.errorConPassMessage }</Text></Label>
                     <Input disabled={disabled} secureTextEntry={true} value={confirmPassword} onChangeText={ (confirmPassword) => this.setState({confirmPassword}) } autoCapitalize='none' />
                 </Item>
             </Fragment>
@@ -241,10 +240,10 @@ class NewUserComponent extends Component {
     }
 
     render() {
-        let { navigation } = this.props
+        let { navigation, screenProps } = this.props
         let { code, username, password, confirmPassword, first_name, middle_name, last_name, disableButton, disabled, action, errors } = this.state
         action = navigation.getParam('action')
-
+        let { trans } = screenProps
         let validated = showValidatedFields(action, errors)
 
         return (
@@ -253,22 +252,22 @@ class NewUserComponent extends Component {
                     <Content >
                         <Form>
                             <Item error={ validated.errorCode } stackedLabel>
-                                <Label>Code <Text style={ css.error } >{ validated.errorCodeMessage }</Text></Label>
+                                <Label>{ trans.t('new_users.form.label.code') } <Text style={ css.error } >{ validated.errorCodeMessage }</Text></Label>
                                 <Input disabled={disabled} value={ code } onChangeText={ (code) => this.setState({code}) } autoCapitalize='none' />
                             </Item>
 
-                            { (action == 'add') ? this.renderCredential(username, password, confirmPassword, disabled, validated) : <Fragment></Fragment> }
+                            { (action == 'add') ? this.renderCredential(username, password, confirmPassword, disabled, validated, trans) : <Fragment></Fragment> }
 
                             <Item error={ validated.errorFirst } stackedLabel>
-                                <Label>First Name <Text style={ css.error } >{ validated.errorFirstMessage }</Text></Label>
+                                <Label>{ trans.t('new_users.form.label.first_name') } <Text style={ css.error } >{ validated.errorFirstMessage }</Text></Label>
                                 <Input disabled={disabled} value={ first_name } onChangeText={ (first_name) => this.setState({first_name}) } autoCapitalize='none' />
                             </Item>
                             <Item stackedLabel>
-                                <Label>Middle Name</Label>
+                                <Label>{ trans.t('new_users.form.label.middle_name') }</Label>
                                 <Input disabled={disabled} value={ middle_name } onChangeText={ (middle_name) => this.setState({middle_name}) } autoCapitalize='none' />
                             </Item>
                             <Item error={ validated.errorLast } stackedLabel>
-                                <Label>Last Name <Text style={ css.error } >{ validated.errorLastMessage }</Text></Label>
+                                <Label>{ trans.t('new_users.form.label.last_name') } <Text style={ css.error } >{ validated.errorLastMessage }</Text></Label>
                                 <Input disabled={disabled} value={ last_name } onChangeText={ (last_name) => this.setState({last_name}) } autoCapitalize='none' />
                             </Item>
                         </Form>
@@ -281,11 +280,11 @@ class NewUserComponent extends Component {
                         {
                             (action == 'add') ?
                                 <Button disabled={disableButton} success block
-                                    onPress={ () => this.onSave() }
+                                    onPress={ () => this.onSave(trans) }
                                 >
-                                    <Text>Save</Text>
+                                    <Text>{ trans.t('new_users.form.buttons.save') }</Text>
                                 </Button> 
-                            : (action == 'edit' && disabled == false) ? this.renderUpdateCommands(disableButton) : this.renderViewCommands()
+                            : (action == 'edit' && disabled == false) ? this.renderUpdateCommands(disableButton, trans) : this.renderViewCommands(trans)
 
                         }
 
