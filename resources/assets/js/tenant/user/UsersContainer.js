@@ -33,15 +33,15 @@ class UsersPageComponent extends Component {
         this.setState({ search })
     }
 
-    onDelete = (data) => {
+    onDelete = (data, trans) => {
 
         if (data.id == this.props.loggedIn.id)
-            return alertAfterTransac('Info', 'You cannot delete your own account.', () => console.log(null))
+            return alertAfterTransac(trans.t('users.alert.info'), trans.t('users.alert.delete_account'), () => console.log(null))
 
-        actionSheetDelete('Are you sure you want to delete '+data.fullname+'?', () => this.props.deleteUser(data.id, null))
+        actionSheetDelete(trans.t('users.alert.delete_confirmation') +data.fullname+'?', () => this.props.deleteUser(data.id, null, trans))
     }
 
-    renderCommands(data) {
+    renderCommands(data, trans) {
         return(
             <View style={cssChat.rowBack} >
                 
@@ -65,10 +65,10 @@ class UsersPageComponent extends Component {
                 
                 <TouchableOpacity 
                     style={[cssChat.backRightBtn, cssChat.backRightBtnRight]} 
-                    onPress={ () => this.onDelete({ id: data.id, fullname: data.fullname }) }                                                
+                    onPress={ () => this.onDelete({ id: data.id, fullname: data.fullname }, trans) }                                                
                 >
                     <Text style={cssChat.whiteIcon}>
-                        DELETE
+                        { trans.t('users.buttons.delete') }
                     </Text>
                 </TouchableOpacity>
             </View>
@@ -102,7 +102,8 @@ class UsersPageComponent extends Component {
 
     render() {
         const { search } = this.state
-        const { navigation, user } = this.props
+        const { navigation, user, screenProps } = this.props
+        const { trans } = screenProps
 
         return (
             <Fragment>
@@ -118,7 +119,7 @@ class UsersPageComponent extends Component {
                             inputStyle={{ padding: 0 }}
                             onChangeText={text => this.searchFilter(text)}
                             onClear={text => this.searchFilter('')}
-                            placeholder="Type a keyword..."
+                            placeholder={trans.t('users.placeholder.search')}
                             value={search}
                         />
 
@@ -139,7 +140,7 @@ class UsersPageComponent extends Component {
                                         rightOpenValue={-150}
                                     >
 
-                                        { this.renderCommands(data.item) }
+                                        { this.renderCommands(data.item, trans) }
 
                                         { this.renderUsersList(data.item, navigation) }
 

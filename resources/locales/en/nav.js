@@ -2,6 +2,7 @@ const nav = {
     dashboard: "Dashboard",
     settings: "Settings",
     messages: "Messages",
+    new_account: "New Account",
     schedule_management: {
         title: "Schedule Management",
             schedule: "Schedule",

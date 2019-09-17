@@ -2,17 +2,17 @@ import tenantUserController from '../../../../../Controller/realm/tenantUserCont
 import { showToast } from '../../shared/toast/Toast'
 import { alertAfterTransac } from '../../shared/alert/AlertMessage'
 
-function checkResult (output, message, dispatch) {
+function checkResult (output, message, dispatch, trans) {
 
     if (output.result) 
-        return alertAfterTransac('Success', message, () => {
+        return alertAfterTransac(trans.t('new_users.form.validation.success'), message, () => {
             dispatch({
                 type: 'GET_USERS',
                 payload: tenantUserController.getUsers()
             })
         })
 
-    return showToast('Error: '+output.message,'Okay','danger')
+    return showToast(trans.t('new_users.form.validation.error') +output.message,trans.t('new_users.form.validation.ok'),'danger')
 }
 
 export const searchUsers = (data, search) => {
@@ -46,11 +46,11 @@ export const getUsers = () => {
     }
 }
 
-export const updateUser = (data, returnToUsers) => async dispatch => {
+export const updateUser = (data, returnToUsers, trans) => async dispatch => {
 
     let updateData = await tenantUserController.updateUser(data)
 
-    checkResult(updateData, 'User information has been updated.', dispatch)
+    checkResult(updateData, trans.t('new_users.form.validation.updated'), dispatch, trans)
     
     if (updateData.result) {
         if (data.id == data.loggedId)
@@ -64,23 +64,23 @@ export const updateUser = (data, returnToUsers) => async dispatch => {
         
 }
 
-export const saveUser = (data, returnToUsers) => async dispatch => {
+export const saveUser = (data, returnToUsers, trans) => async dispatch => {
 
     let saveData = await tenantUserController.saveUser(data)
 
-    checkResult(saveData, 'New user account has been created.', dispatch)
+    checkResult(saveData, trans.t('new_users.form.validation.saved'), dispatch, trans)
 
     if (saveData.result)
         returnToUsers()
 }
 
-export const deleteUser = (id, returnToUsers) => {
+export const deleteUser = (id, returnToUsers, trans) => {
 
     return (dispatch) => {
 
         let deleteData = tenantUserController.deleteUser(id)
 
-        checkResult(deleteData, 'User has been deleted.', dispatch)
+        checkResult(deleteData, trans.t('new_users.form.validation.deleted'), dispatch, trans)
 
         if (typeof returnToUsers === 'function')
             returnToUsers()

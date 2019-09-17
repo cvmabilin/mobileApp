@@ -38,8 +38,8 @@ const SeperatedRoutes = {
         }
     },
     NewUserPage: {
-        headerProperties: (css, params, navigation) => {
-            let headerTitle = (params.action == 'add') ? 'New Account' : params.data.fullname
+        headerProperties: (css, params, navigation, trans) => {
+            let headerTitle = (params.action == 'add') ? trans.t('nav.new_account') : params.data.fullname
             return {
                 headerTitle,
                 headerLeft: leftBackHeader(css, navigation),
