@@ -2,10 +2,10 @@
 
 Sample Mobile App using react-native
 
-Libraries:
+# Libraries:
 
-Native Base
-React Navigation
-Realm
-Redux
-i18n-js for Translation
+# Native Base
+# React Navigation
+# Realm
+# Redux
+# i18n-js for Translation
