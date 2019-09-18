@@ -29,9 +29,7 @@ target 'mobileApp' do
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
 
 
-  pod 'RNReanimated', :path => '../node_modules/react-native-reanimated'
 
-  pod 'RNGestureHandler', :path => '../node_modules/react-native-gesture-handler'
 
   target 'mobileAppTests' do
     inherit! :search_paths

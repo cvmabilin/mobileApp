@@ -130,7 +130,7 @@ class NewUserComponent extends Component {
             first_name,
             middle_name,
             last_name,
-        }, editUserConstraints)
+        }, editUserConstraints, this.props.screenProps.trans)
 
         if (result != undefined)
             return false
