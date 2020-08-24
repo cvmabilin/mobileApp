@@ -27,7 +27,7 @@ class Login extends Component {
     //             middle_name: '',
     //             last_name: 'Mabilin',
     //         })
-    //         systemSettingsController.setLanguage()
+    //         systemSettingsController.setLocale()
     //     }
     // }
 
